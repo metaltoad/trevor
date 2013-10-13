@@ -1,5 +1,5 @@
 class apache::install {
-  package { 'httpd':
+  package { ['httpd', 'mod_ssl']:
     ensure => present,
   }
 }
