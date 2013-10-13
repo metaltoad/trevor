@@ -1,0 +1,65 @@
+<%
+  # convert memorysize into MiB
+  mem,unit = scope.lookupvar('::memorysize').split
+  proccount = scope.lookupvar('::processorcount')
+  mem = mem.to_f
+  # ensure memory_share is set
+  if ! @memory_share
+    @memory_share = 1.0
+  end
+  # Multiply the memory by our weight.
+  mem *= @memory_share.to_f
+  case unit
+    when nil:  mem *= (1>>20)
+    when 'kB': mem *= (1>>10)
+    when 'MB': mem *= (1<<0)
+    when 'GB': mem *= (1<<10)
+    when 'TB': mem *= (1<<20)
+  end
+%>
+
+[mysqld]
+
+default_storage_engine = InnoDB
+innodb_flush_method=O_DIRECT
+skip_name_resolve
+innodb_log_file_size = 256M
+innodb_buffer_pool_size = <%= (mem * 0.25).to_i %>M
+innodb_locks_unsafe_for_binlog = 1
+
+<% if @server_id != '01' -%>
+log-bin=mysql-bin
+server-id = <%= @server_id %>
+expire_logs_days = 10
+binlog_format=row
+<% end -%>
+
+max_connections = 400
+key_buffer_size = <%= (mem * 0.10).to_i %>M
+max_allowed_packet = 500M
+thread_cache_size = 16
+query_cache_size = <%= (mem * 0.10).to_i %>M
+query_cache_limit = 16M
+join_buffer_size = 8M
+table_cache = 2000
+
+# Keep these values equal
+tmp_table_size= <%= (mem * 0.10).to_i %>M
+max_heap_table_size = <%= (mem * 0.10).to_i %>M
+
+wait_timeout = 3600
+interactive_timeout = 3600
+
+[mysqldump]
+quick
+max_allowed_packet = 500M
+
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+[client]
+default-character-set=utf8
+
+# Extra overrides
+!include /etc/my_extra.cnf
