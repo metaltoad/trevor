@@ -1,6 +1,7 @@
 class php53::install {
   package { [
       'php53u',
+      'php53u-common',
       'php53u-fpm',
       'php53u-pecl-apc',
       'php53u-pdo',
@@ -22,6 +23,16 @@ class php53::configure {
     group => 'root',
     require => Package['httpd'],
     notify => Service['httpd'],
+  }
+
+  file { '/etc/php.d':
+    ensure => directory,
+    recurse => true,
+    owner => 'root',
+    group => 'root',
+    source => 'puppet:///modules/php53/php.d',
+    require => Package['php53u-common'],
+    notify => Service['php-fpm'],
   }
 }
 
