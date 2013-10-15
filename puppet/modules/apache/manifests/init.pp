@@ -33,6 +33,16 @@ class apache::config {
     require => Package['httpd'],
     notify => Service['httpd'],
   }
+
+  augeas { 'apache-worker':
+    changes => [
+      'set /files/etc/sysconfig/httpd/HTTPD "/usr/sbin/httpd.worker"',
+    ],
+    lens => 'Shellvars.lns',
+    incl => '/etc/sysconfig/httpd',
+    require => Package['httpd'],
+    notify => Service['httpd'],
+  }
 }
 
 class apache::service {
