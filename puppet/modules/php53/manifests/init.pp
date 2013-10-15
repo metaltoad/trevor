@@ -15,6 +15,26 @@ class php53::install {
   }
 }
 
+class php53::configure {
+  file { '/etc/httpd/conf.d/php.conf':
+    source => 'puppet:///modules/php53/php.conf',
+    owner => 'root',
+    group => 'root',
+    require => Package['httpd'],
+    notify => Service['httpd'],
+  }
+}
+
+class php53::service {
+  service { 'php-fpm':
+    enable => true,
+    ensure => running,
+    require => Package['php53u-fpm'],
+  }
+}
+
 class php53 {
   class { 'php53::install': }
+  class { 'php53::configure': }
+  class { 'php53::service': }
 }

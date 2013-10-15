@@ -7,8 +7,9 @@ class mysqld::install {
 
 class mysqld::service {
   service { 'mysqld':
-    ensure      => running,
-    require     => Class['mysql', 'mysqld::install'],
+    enable => true,
+    ensure => running,
+    require => Class['mysql', 'mysqld::install'],
     subscribe => File['/etc/my.cnf'],
   }
 }

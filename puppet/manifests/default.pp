@@ -1,4 +1,5 @@
 node default {
+  include base
   include epel
   include ius
   include php53
