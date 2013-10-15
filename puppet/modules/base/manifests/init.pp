@@ -11,4 +11,14 @@ class base {
     mode   => '0644',
     source => '/usr/share/zoneinfo/US/Pacific',
   }
+
+  service { 'iptables':
+    enable => true,
+    ensure => running,
+  }
+
+  file { '/etc/sysconfig/iptables':
+    source => 'puppet:///modules/base/iptables',
+    notify => Service['iptables'],
+  }
 }
