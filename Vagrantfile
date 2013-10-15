@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network :public_network
 
-  config.vm.synced_folder "webroot/", "/var/www/sites/default"
+  config.vm.synced_folder "", "/var/www/sites/default", owner: "apache", group: "apache"
 
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "puppet/manifests"

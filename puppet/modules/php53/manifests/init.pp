@@ -5,6 +5,7 @@ class php53::install {
       'php53u-fpm',
       'php53u-pecl-apc',
       'php53u-pdo',
+      'php53u-mysql',
       'php53u-xml',
       'php53u-mbstring',
       'php53u-gd',
