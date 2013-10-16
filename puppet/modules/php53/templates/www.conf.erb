@@ -1,0 +1,34 @@
+<%
+  # convert memorysize into MiB
+  mem,unit = @memorysize.split
+  memory_share = scope.lookupvar('php53::memory_share').to_f;
+  worker_average_memory = scope.lookupvar('php53::worker_average_memory').to_f;
+  my_memory = mem.to_f * memory_share
+  workers = my_memory / worker_average_memory
+
+  # Multiply the total memory by our share.
+  mem *= @memory_share.to_f
+  case unit
+    when nil:  mem *= (1>>20)
+    when 'kB': mem *= (1>>10)
+    when 'MB': mem *= (1<<0)
+    when 'GB': mem *= (1<<10)
+    when 'TB': mem *= (1<<20)
+  end
+%>
+[www]
+listen = 127.0.0.1:9000
+
+listen.allowed_clients = 127.0.0.1
+user = apache
+group = apache
+pm = dynamic
+pm.max_children = <%= workers.ceil %>
+pm.start_servers = <%= (workers / 5).ceil %>
+pm.min_spare_servers = <%= (workers / 5).ceil %>
+pm.max_spare_servers = <%= (workers / 5).ceil %>
+
+slowlog = /var/log/php-fpm/www-slow.log
+
+php_admin_value[error_log] = /var/log/php-fpm/www-error.log
+php_admin_flag[log_errors] = on

@@ -35,6 +35,13 @@ class php53::configure {
     require => Package['php53u-common'],
     notify => Service['php-fpm'],
   }
+
+  file { '/etc/php-fpm.d/www.conf':
+    ensure => present,
+    content => template('php53/www.conf.erb'),
+    require => Package['php53u-fpm'],
+    notify => Service['php-fpm'],
+  }
 }
 
 class php53::service {
@@ -45,7 +52,7 @@ class php53::service {
   }
 }
 
-class php53 {
+class php53 ($memory_share = 1.0, $worker_average_memory = 64) {
   class { 'php53::install': }
   class { 'php53::configure': }
   class { 'php53::service': }
