@@ -21,4 +21,17 @@ class base {
     source => 'puppet:///modules/base/iptables',
     notify => Service['iptables'],
   }
+
+  # basic useful stuff.
+  package { [
+    'yum-cron',
+    'screen',
+    'ImageMagick',
+    'git',
+    'subversion',
+    'mercurial',
+    'bzr',
+  ]:
+    ensure => present,
+  }
 }
