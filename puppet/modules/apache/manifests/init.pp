@@ -43,6 +43,16 @@ class apache::config {
     require => Package['httpd'],
     notify => Service['httpd'],
   }
+
+  augeas { 'httpd.conf':
+    context => '/files/etc/httpd/conf/httpd.conf',
+    require => Package['httpd'],
+    notify => Service['httpd'],
+    changes => [
+      "set *[self::directive='ServerTokens']/arg 'Prod'",
+      "set *[self::directive='ServerSignature']/arg 'Off'",
+    ],
+  }
 }
 
 class apache::service {
