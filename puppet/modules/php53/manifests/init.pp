@@ -44,6 +44,15 @@ class php53::configure {
     require => Package['php53u-fpm'],
     notify => Service['php-fpm'],
   }
+
+  augeas { 'php.ini':
+    context => "/files/etc/php.ini/PHP",
+    require => Package['php53u'],
+    notify => Service['php-fpm'],
+    changes => [
+      "set expose_php Off",
+    ],
+  }
 }
 
 class php53::service {
