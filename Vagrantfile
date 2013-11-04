@@ -21,14 +21,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 end
 
 
-
+# Simple plugin to provide the "vagrant open" command, which launches a web browser.
+# Plugins don't noramally belong here, but this one is included to make things a little
+# easier for first-time users.
 module OpenCommand
   class SshOpenCommand < Vagrant.plugin("2", "command")
     def execute
-      argv = parse_options()
+      opts = OptionParser.new do |o|
+        o.banner = "Usage: vagrant open [vm-name]"
+        o.separator ""
+      end
+      argv = parse_options(opts)
       with_target_vms(argv) do |machine|
         uuid = machine.provider.driver.uuid
-
         machine.config.vm.networks.to_enum.with_index(0).each do |network, i|
           if network[0] == :public_network
             output = machine.provider.driver.execute("guestproperty", "get", uuid, "/VirtualBox/GuestInfo/Net/#{i}/V4/IP")
