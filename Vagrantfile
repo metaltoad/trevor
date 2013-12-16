@@ -6,6 +6,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.max_tries = 100
   config.ssh.timeout   = 2400
 
+  config.ssh.forward_agent = true
+
   config.vm.box = "centos6"
   config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210.box"
 
