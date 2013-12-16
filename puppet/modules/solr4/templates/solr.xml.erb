@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<solr persistent="false">
+  <cores adminPath="/admin/cores" host="${host:}" hostPort="8080" hostContext="${hostContext:solr}">
+
+    <%
+    cores = []
+    scope.compiler.catalog.resources.each do |resource|
+      if resource.type == 'Solr4::Core'
+        cores.push(resource.name)
+      end
+    end
+    -%>
+    <% cores.sort.each do |core| %>
+      <core name="<%= core %>" instanceDir="<%= core %>" />
+    <% end -%>
+
+  </cores>
+</solr>
