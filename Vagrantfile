@@ -4,6 +4,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos6"
   config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210.box"
 
+  config.ssh.forward_agent = true
+
   config.vm.network :public_network
 
   config.vm.synced_folder "", "/var/www/sites/default", owner: "apache", group: "apache"
