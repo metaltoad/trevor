@@ -1,4 +1,5 @@
 VAGRANTFILE_API_VERSION = "2"
+Vagrant.require_version ">= 1.4.0"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = "centos64-nrel-v20131103"
@@ -8,7 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network :public_network
 
-  config.vm.synced_folder "", "/var/www/sites/default", owner: "apache", group: "apache"
+  config.vm.synced_folder "", "/var/www/sites/default", owner: 48, group: 48
 
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "puppet/manifests"

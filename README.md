@@ -40,6 +40,5 @@ These things should be easy:
 
 ### Sticky problems to solve ###
 
-* Mapping shared folder to "apache" user breaks during first provision
 * How can we make it easy to go from command line to browser? (not ssh -> ifconfig -> copy+paste to browser)
 * How can we support multisites that need multiple host file alises?
