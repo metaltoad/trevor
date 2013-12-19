@@ -40,5 +40,4 @@ These things should be easy:
 
 ### Sticky problems to solve ###
 
-* How can we make it easy to go from command line to browser? (not ssh -> ifconfig -> copy+paste to browser)
 * How can we support multisites that need multiple host file alises?
