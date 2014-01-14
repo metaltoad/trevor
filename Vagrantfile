@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network :public_network
 
-  config.vm.synced_folder "", "/var/www/sites/default", owner: 48, group: 48
+  config.vm.synced_folder "", "/var/www/sites/default", owner: 48, group: 48, :mount_options => ["dmode=775","fmode=664"]
 
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "puppet/manifests"

@@ -1,4 +1,15 @@
 class base {
+
+  group { 'vagrant':
+    ensure => present,
+  }
+  user { 'vagrant':
+    ensure => present,
+    gid => 'vagrant',
+    groups => ['wheel', 'apache'],
+    require => Package['httpd'],
+  }
+
   file { ['/usr/src/redhat', '/usr/src/redhat/RPMS']:
     ensure => directory,
     owner => root,
