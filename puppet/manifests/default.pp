@@ -6,6 +6,8 @@ node default {
   include apache
   include capistrano
   include compass
+  include nodejs
+  include grunt
   class { 'mysql':
     memory_share => 0.30, # Percentage of RAM used for MySQL
   }
