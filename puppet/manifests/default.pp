@@ -1,13 +1,11 @@
 node default {
+  ### Base ###
   include base
   include epel
   include ius
-  include drush
+
+  ### LAMP ###
   include apache
-  include capistrano
-  include compass
-  include nodejs
-  include grunt
   class { 'mysql':
     memory_share => 0.30, # Percentage of RAM used for MySQL
   }
@@ -25,4 +23,11 @@ node default {
   class { 'memcached':
     memory_share => 0.05, # Percentage of RAM used for memcached
   }
+
+  ### Developer utilities ###
+  include drush
+  include capistrano
+  include compass
+  include nodejs
+  include grunt
 }
