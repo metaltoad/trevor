@@ -4,6 +4,7 @@ node default {
   include ius
   include drush
   include apache
+  include capistrano
   class { 'mysql':
     memory_share => 0.30, # Percentage of RAM used for MySQL
   }
