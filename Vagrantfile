@@ -5,6 +5,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos64-nrel-v20131103"
   config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20131103.box"
 
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 512
+  end
+
   config.ssh.forward_agent = true
 
   config.vm.network :public_network
