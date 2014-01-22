@@ -22,6 +22,7 @@
 
 default_storage_engine = InnoDB
 innodb_flush_method=O_DIRECT
+innodb_flush_log_at_trx_commit = 0
 skip_name_resolve
 innodb_log_file_size = 256M
 innodb_buffer_pool_size = <%= (mem * 0.25).to_i %>M
