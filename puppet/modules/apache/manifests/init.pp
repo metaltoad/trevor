@@ -49,8 +49,12 @@ class apache::config {
     require => Package['httpd'],
     notify => Service['httpd'],
     changes => [
+      "set directive[. = 'ServerTokens'] ServerTokens",
       "set *[self::directive='ServerTokens']/arg 'Prod'",
+      "set directive[. = 'ServerSignature'] ServerSignature",
       "set *[self::directive='ServerSignature']/arg 'Off'",
+      "set directive[. = 'EnableSendfile'] EnableSendfile",
+      "set *[self::directive='EnableSendfile']/arg 'Off'",
     ],
   }
 }
