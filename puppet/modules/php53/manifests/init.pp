@@ -51,6 +51,10 @@ class php53::configure {
     notify => Service['php-fpm'],
     changes => [
       "set expose_php Off",
+      "set allow_url_fopen On",
+      "set display_errors On",
+      "set error_reporting 'E_ALL | E_STRICT'",
+      "set date.timezone 'America/Los_Angeles'",
     ],
   }
 }
