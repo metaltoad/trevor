@@ -11,7 +11,7 @@ class drush {
     cwd => '/usr/local/lib/drush',
     command => 'rm -rf * && curl -L https://api.github.com/repos/drush-ops/drush/tarball/6.0.0 | tar --strip-components 1 -xzf - && ./drush',
     unless => "[ \"`/usr/local/lib/drush/drush --version`\" = ' Drush Version   :  6.0 ' ]",
-    require => File['/usr/local/lib/drush'],
+    require => [File['/usr/local/lib/drush'], Package['php53u-cli']],
   }
 
   file { '/usr/local/bin/drush':

@@ -1,6 +1,7 @@
 class php53::install {
   package { [
       'php53u',
+      'php53u-cli',
       'php53u-common',
       'php53u-fpm',
       'php53u-pecl-apc',
