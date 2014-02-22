@@ -25,7 +25,7 @@ class php53::configure {
     source => 'puppet:///modules/php53/php.conf',
     owner => 'root',
     group => 'root',
-    require => Package['httpd'],
+    require => [Package['httpd'], Package['php53u']],
     notify => Service['httpd'],
   }
 
