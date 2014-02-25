@@ -1,0 +1,259 @@
+<?php
+/**
+ * @file
+ * Provides administrative UI for workflow.
+ * Why it's own module? Lower code footprint and better performance.
+ * Additional credit to gcassie ( http://drupal.org/user/80260 ) for
+ * the initial push to split UI out of core workflow.
+ * We're moving workflow in a API direction, so UI and the like - out.
+ */
+
+define('WORKFLOW_ADMIN_UI_ARROW', '&#8594;');
+
+/**
+ * Implements hook_help().
+ */
+function workflow_admin_ui_help($path, $arg) {
+  switch ($path) {
+    case 'admin/config/workflow/workflow/add':
+      return t('To get started, provide a name for your workflow. This name
+        will be used as a label when the workflow status is shown during node
+        editing.');
+
+    case 'admin/config/workflow/workflow/%':
+      return t("To create a new state, enter its name in the last row of the
+        'State' column. Check the 'Active' box to make it effective. You may
+        also drag it to the appropriate position.") . '<br />'
+      . t("A state must be marked as active, to be available in the
+        workflow's transitions.") . '<br />'
+      . t("If you wish to inactivate a state that has content (i.e. count is
+        not zero), then you need to select a state to which to reassign that
+        content.");
+
+    case 'admin/config/workflow/workflow/transitions/%':
+      return t('You are currently viewing the possible transitions to and from
+        workflow states. The state is shown in the left column; the state to be
+        moved to is to the right. For each transition, check the box next to
+        the role(s) that may initiate the transition. For example, if only the
+        "production editor" role may move a node from Review state to the
+        Published state, check the box next to "production editor". The author
+        role is built in and refers to the user who authored the node.');
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function workflow_admin_ui_permission() {
+  return array(
+    'administer workflow' => array(
+      'title' => t('Administer workflow'),
+      'description' => t('Administer workflow configurations.'),
+    ),
+    'participate in workflow' => array(
+      'title' => t('Participate in workflow'),
+      'description' => t('Role is shown on workflow admin pages.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function workflow_admin_ui_menu() {
+  $items['admin/config/workflow/workflow'] = array(
+    'title' => 'Workflow',
+    'file' => 'workflow_admin_ui.pages.inc',
+    'access arguments' => array('administer workflow'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('workflow_admin_ui_overview_page'),
+    'description' => 'Allows the creation and assignment of arbitrary workflows to node types.',
+  );
+
+  $items['admin/config/workflow/workflow/%workflow'] = array(
+    'file' => 'workflow_admin_ui.pages.inc',
+    'access arguments' => array('administer workflow'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('workflow_admin_ui_states_form', 4),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/config/workflow/workflow/add'] = array(
+    'file' => 'workflow_admin_ui.pages.inc',
+    'access arguments' => array('administer workflow'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('workflow_admin_ui_add_form'),
+    'type' => MENU_CALLBACK,
+  );
+
+  if (module_exists('workflownode')) {
+    $items['admin/config/workflow/workflow/edit/%workflow'] = array(
+      'title' => 'Edit',
+      'file' => 'workflow_admin_ui.pages.inc',
+      'access arguments' => array('administer workflow'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('workflow_admin_ui_edit_form', 5),
+      'type' => MENU_CALLBACK,
+    );
+  }
+
+  $items["admin/config/workflow/workflow/delete/%workflow"] = array(
+    'title' => 'Delete',
+    'file' => 'workflow_admin_ui.pages.inc',
+    'access arguments' => array('administer workflow'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('workflow_admin_ui_delete_form', 5),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items["admin/config/workflow/workflow/transitions/%workflow"] = array(
+    'title' => 'Transitions',
+    'file' => 'workflow_admin_ui.pages.inc',
+    'access arguments' => array('administer workflow'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('workflow_admin_ui_transitions_form', 5),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items["admin/config/workflow/workflow/perm_summary/%workflow"] = array(
+    'title' => 'Permission Summary',
+    'file' => 'workflow_admin_ui.pages.inc',
+    'access arguments' => array('administer workflow'),
+    'page callback' => 'workflow_admin_ui_view_permissions_form',
+    'page arguments' => array(5),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function workflow_admin_ui_theme() {
+  return array(
+    'workflow_admin_ui_overview_page' => array('render element' => 'form'),
+    'workflow_admin_ui_type_map_form' => array('render element' => 'form'),
+    'workflow_admin_ui_transitions_form' => array('render element' => 'form'),
+    'workflow_admin_ui_edit_form' => array('render element' => 'form'),
+    'workflow_admin_ui_states_form' => array('render element' => 'form'),
+  );
+}
+
+/**
+ * Implements hook_user_role_insert().
+ *
+ * Make sure new roles are allowed to participate in workflows by default.
+ */
+function workflow_admin_ui_user_role_insert($role) {
+  user_role_change_permissions($role->rid, array('participate in workflow' => 1));
+}
+
+/**
+ * Helper function. Create breadcrumbs.
+ *
+ * @param $workflow
+ *  The workflow object.
+ * @param $extra (optional)
+ *  The link to the extra item to add to the end of the breadcrumbs.
+ *
+ * @return
+ *   none.
+ */
+function workflow_admin_ui_breadcrumbs($workflow, $extra = NULL) {
+  $bc = array(l(t('Home'), '<front>'));
+  $bc[] = l(t('Configuration'), 'admin/config');
+  $bc[] = l(t('Workflow'), 'admin/config/workflow');
+  $bc[] = l(t('Workflow'), 'admin/config/workflow/workflow');
+  $bc[] = l($workflow->label(), "admin/config/workflow/workflow/$workflow->wid");
+  if ($extra) {
+    $bc[] = $extra;
+  }
+  drupal_set_breadcrumb($bc);
+}
+
+/**
+ * Menu callback. Edit a workflow's properties.
+ *
+ * @param $wid
+ *   The workflow object..
+ * @return
+ *   HTML form and permissions table.
+ */
+
+/**
+ * Implements hook_workflow_operations().
+ *
+ * Might as well eat our own cooking.
+ */
+function workflow_admin_ui_workflow_operations($op, $workflow = NULL, $state = NULL) {
+  switch ($op) {
+    case 'top_actions':
+      // Build a link to each workflow.
+      $alt = t('Add a new workflow');
+      $actions = array(
+        'add-workflow' => array(
+          'title' => t('Add workflow'),
+          // @TODO: It might be more sane to go to the "settings" page.
+          'href' => 'admin/config/workflow/workflow/add',
+          'attributes' => array('alt' => $alt, 'title' => $alt),
+        ),
+      );
+      foreach (workflow_load_multiple() as $workflow) {
+        $name = $workflow->getName();
+        $wid = $workflow->wid;
+        $alt = t('Work with @wf', array('@wf' => $name));
+        $actions[drupal_html_class($name)] = array(
+          'title' => $workflow->label(),
+          'href' => "admin/config/workflow/workflow/$wid",
+          'attributes' => array('alt' => $alt, 'title' => $alt),
+        );
+      }
+
+      return $actions;
+
+    case 'workflow':
+      $name = $workflow->getName();
+      $wid = $workflow->wid;
+      $actions = array();
+
+      if(module_exists('workflownode')) {
+        $actions += array(
+          'workflow_settings' => array(
+            'title' => t('Settings'),
+            'href' => "admin/config/workflow/workflow/edit/$wid",
+            'attributes' => array('alt' => t('Edit the @wf settings', array('@wf' => $name))),
+          ),
+        );
+      }
+      else {
+        // For Workflow Field, these settings are in the Field settings form.
+      }
+
+      $actions += array(
+        'workflow_transitions' => array(
+          'title' => t('Transitions'),
+          'href' => "admin/config/workflow/workflow/transitions/$wid",
+          'attributes' => array('alt' => t('Edit the @wf transitions', array('@wf' => $name))),
+        ),
+
+        'workflow_permission_summary' => array(
+          'title' => t('Summary'),
+          'href' => "admin/config/workflow/workflow/perm_summary/$wid",
+          'attributes' => array('alt' => t('See a summary of the @wf transitions', array('@wf' => $name))),
+        ),
+
+        'workflow_delete' => array(
+          'title' => t('Delete'),
+          'href' => "admin/config/workflow/workflow/delete/$wid",
+          'attributes' => array('alt' => t('Delete the @wf workflow', array('@wf' => $name))),
+        ),
+      );
+
+      foreach ($actions as $name => $link) {
+        $actions[$name]['attributes']['title'] = $actions[$name]['attributes']['alt'];
+      }
+
+      return $actions;
+  }
+}

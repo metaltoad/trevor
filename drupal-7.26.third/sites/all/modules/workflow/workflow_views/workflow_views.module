@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Provide views integration for workflows.
+ * Why it's own module? Some sites have views some don't,
+ * all prefer a lower code footprint and better performance.
+ */
+
+
+/**
+ * Implements hook_permission().
+ */
+function workflow_views_permission() {
+  return array(
+    'access workflow summary views' => array(
+      'title' => t('Access workflow summary views'),
+      'description' => t('Access workflow summary views.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_views_api().
+ *
+ * @todo D8: remove hook_views_api. See [#1875596]
+ */
+function workflow_views_views_api() {
+  return array(
+    'api' => 3,
+    // The views.inc files are already in the root directory,
+    // as required in D8.
+    // 'path' => drupal_get_path('module', 'workflow_views'),
+  );
+}
