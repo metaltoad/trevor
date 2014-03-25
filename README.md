@@ -30,7 +30,7 @@ A work in progress, many items listed below are unimplemented.
 * configurable PHP version
 * Solr
 
-### Convenionce goals ###
+### Convenience goals ###
 
 These things should be easy:
 
