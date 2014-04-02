@@ -18,7 +18,7 @@ node default {
   }
   class { 'php53':
     memory_share => 0.65, # Percentage of RAM used for PHP
-    worker_average_memory => 100, # estimate average PHP memory, in MB
+    worker_average_memory => 200, # estimate average PHP memory, in MB
   }
   class { 'memcached':
     memory_share => 0.05, # Percentage of RAM used for memcached
