@@ -1,8 +1,8 @@
 <%
   # convert memorysize into MiB
   mem,unit = @memorysize.split
-  memory_share = scope.lookupvar('php53::memory_share').to_f;
-  worker_average_memory = scope.lookupvar('php53::worker_average_memory').to_f;
+  memory_share = scope.lookupvar('php::memory_share').to_f;
+  worker_average_memory = scope.lookupvar('php::worker_average_memory').to_f;
 
   mem = mem.to_f
   case unit
