@@ -4,11 +4,9 @@ class php::install {
       "php${php::package}-cli",
       "php${php::package}-common",
       "php${php::package}-fpm",
-      "php${php::package}-pecl-apc",
       "php${php::package}-pecl-imagick",
-      "php${php::package}-pecl-memcached",
+      "php${php::package}-pecl-memcache",
       "php${php::package}-pdo",
-      "php${php::package}-mysql",
       "php${php::package}-xml",
       "php${php::package}-mbstring",
       "php${php::package}-gd",
@@ -17,6 +15,28 @@ class php::install {
     ]:
     ensure => present,
     require => Yumrepo['ius'],
+  }
+  case $php::package {
+    53u, 54: {
+      package { [
+          "php${php::package}-pecl-memcached",
+          "php${php::package}-pecl-apc",
+          "php${php::package}-mysql",
+        ]:
+        ensure => present,
+        require => Yumrepo['ius'],
+      }
+    }
+    55u: {
+      package { [
+          "php${php::package}-pecl-jsonc",
+          "php${php::package}-mysqlnd",
+          "php${php::package}-opcache",
+        ]:
+        ensure => present,
+        require => Yumrepo['ius'],
+      }
+    }
   }
 }
 
