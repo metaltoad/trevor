@@ -1,56 +1,62 @@
 class php::install {
-  case $php::package {
-    53xxx, 54, 55u: {
-      package { [
-          "php${php::package}",
-          "php${php::package}-cli",
-          "php${php::package}-common",
-          "php${php::package}-fpm",
-          "php${php::package}-pecl-imagick",
-          "php${php::package}-pecl-memcache",
-          "php${php::package}-pdo",
-          "php${php::package}-xml",
-          "php${php::package}-mbstring",
-          "php${php::package}-gd",
-          "php${php::package}-pear",
-          "php${php::package}-mcrypt",
-        ]:
-        ensure => present,
-        require => Yumrepo['ius'],
-      }
-    }
-    53u, 54: {
-      package { [
-          "php${php::package}-pecl-memcached",
-          "php${php::package}-pecl-apc",
-          "php${php::package}-mysql",
-        ]:
-        ensure => present,
-        require => Yumrepo['ius'],
-      }
-    }
-    55u: {
-      package { [
-          "php${php::package}-pecl-jsonc",
-          "php${php::package}-mysqlnd",
-          "php${php::package}-opcache",
-        ]:
-        ensure => present,
-        require => Yumrepo['ius'],
-      }
-    }
-    hhvm: {
-      package { [
-        "hhvm",
+
+  if $php::version =~ /5.3|5.4|5.5/ {
+    package { [
+        "php${php::package}",
+        "php${php::package}-cli",
+        "php${php::package}-common",
+        "php${php::package}-fpm",
+        "php${php::package}-pecl-imagick",
+        "php${php::package}-pecl-memcache",
+        "php${php::package}-pdo",
+        "php${php::package}-xml",
+        "php${php::package}-mbstring",
+        "php${php::package}-gd",
+        "php${php::package}-pear",
+        "php${php::package}-mcrypt",
       ]:
       ensure => present,
-      require => Yumrepo['hop5'],
-      }
-      file { '/usr/bin/php':
-        ensure => "link",
-        target => "/usr/bin/hhvm",
-        require => Package["hhvm"],
-      }
+      require => Yumrepo['ius'],
+    }
+  }
+  if $php::version =~ /5.3|5.4/ {
+    package { [
+        "php${php::package}-pecl-memcached",
+        "php${php::package}-pecl-apc",
+        "php${php::package}-mysql",
+      ]:
+      ensure => present,
+      require => Yumrepo['ius'],
+    }
+    file { '/etc/php.d/apc.ini':
+      source => 'puppet:///modules/php/php.d/apc.ini',
+      owner => 'root',
+      group => 'root',
+      require => Package["php${php::package}"],
+      notify => Service['php-fpm'],
+    }
+  }
+  if $php::version =~ /5.5/ {
+    package { [
+        "php${php::package}-pecl-jsonc",
+        "php${php::package}-mysqlnd",
+        "php${php::package}-opcache",
+      ]:
+      ensure => present,
+      require => Yumrepo['ius'],
+    }
+  }
+  if $php::version =~ /hhvm/ {
+    package { [
+      "hhvm",
+    ]:
+    ensure => present,
+    require => Yumrepo['hop5'],
+    }
+    file { '/usr/bin/php':
+      ensure => "link",
+      target => "/usr/bin/hhvm",
+      require => Package["hhvm"],
     }
   }
 }
@@ -81,15 +87,6 @@ class php::configure {
     }
   }
   else {
-    file { '/etc/php.d':
-      ensure => directory,
-      recurse => true,
-      owner => 'root',
-      group => 'root',
-      source => 'puppet:///modules/php/php.d',
-      notify => Service['php-fpm'],
-    }
-
     file { '/etc/php-fpm.d/www.conf':
       ensure => present,
       content => template('php/www.conf.erb'),
