@@ -1,43 +1,64 @@
-# An experimental Vagrant box for Drupal.
+# A Vagrant box for Drupal (and other LAMP projects).
 
-A work in progress, many items listed below are unimplemented.
+This is a Vagrant box built on CentOS 6 and the Puppet provisioner.
+
+### Quick start ###
+
+* Install Vagrant and VirtualBox
+* run `vagrant up`
+* Place your PHP code in a new directory called `webroot`
+* run `vagrant open` to launch a web browser (currently, the `open` command only implemented on OS X)
+
+By default, the virtual machine will use bridged networking, so your VM will need to be able to obtain an IP address via DHCP.  Bridged networking has the advantage of being able to run multiple vagrant boxes simutaneousy, without TCP port conflicts.
+See `Vagrantfile` and `puppet/manifests/default.pp` for customization options.
 
 ### Main Packages ###
 
 * LAMP
-* php-fpm, apc
-* popular PHP extensions: xml, GD, mcrypt, mbstring, php-imagemagick
-* imagemagick
+* Choice of PHP version: 5.3, 5.4, 5.5, HHVM
+* popular PHP extensions: xml, mcrypt, mbstring, GD, php-imagemagick, etc
+* HTTPS support
+* postfix
+* _TODO: Solr_
+
+### Performance Ready ###
+
+* mod_fastcgi + php-fpm
+* Apache Worker MPM
+* Zend OPcache (5.5 only)
+* APC (<= 5.4 only)
 * memcached
+* _TODO: Varnish_
+
+### Debugging / developer tools ###
+
 * compass
 * drush
 * capistrano
-* vim,nano
-* https
-* git,svn,bzr,mercurial
+* git, svn, bzr, mercurial
+* _TODO: XDebug / XHprof / webgrind_
+
+### Security features ###
+
 * yum-cron
 * iptables
+* _TODO: fail2ban_
+* _TODO: iptables_
 
-### Production / local options ###
-* fail2ban
-* postfix
-* iptables
-* XDebug / webgrind
+### Future goals ###
 
-### Other options ###
-* Extra Apache virtualhosts (maybe not desirable, since each project or repo can have its own Vagrant box)
-* configurable system RAM
-* configurable PHP version
-* Solr
+* A development / production switch.  This will be important when e.g. XDebug is added in the future.
+* Optional support for Apache virtualhosts (the choice to omit this currently is intentional, since the intent is a dedicated vagrant box per project, but vhosts may be needed someday).
+* Automatic updates to host OS's /etc/hosts file, so that sites don't have to be accessed via IP.
 
-### Convenience goals ###
+### Adding Trevor as a Git submodule ###
 
-These things should be easy:
+We have found Trevor works well as a Git submodule.  To add the submodule and some symbolic links to the top of your repository, follow these steps:
 
-* bridge host tools like Drush / SequelPro to VM guest
-* drush sql-sync / cap db:pull should work on host or guest
-* Possibly sync the host user's SSH keys? (Or maybe vagrant will take care of ssh agent forwarding for us)
+    git submodule add git@github.com:metaltoad/trevor.git
+    ln -s trevor/Vagrantfile .
+    ln -s trevor/puppet .
+    git add Vagrantfile puppet
+    git commit
 
-### Sticky problems to solve ###
-
-* How can we support multisites that need multiple host file alises?
+Note that symlinks won't work if you have collaborators using Windows.
