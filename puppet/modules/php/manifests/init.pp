@@ -14,9 +14,17 @@ class php::install {
         "php${php::package}-gd",
         "php${php::package}-pear",
         "php${php::package}-mcrypt",
+        "php${php::package}-pecl-xdebug",
       ]:
       ensure => present,
       require => Yumrepo['ius'],
+    }
+    file {'/etc/php.d/xdebug.ini':
+      source => 'puppet:///modules/php/php.d/xdebug.ini',
+      owner => 'root',
+      group => 'root',
+      require => Package["php${php::package}"],
+      notify => Service['php-fpm'],
     }
   }
   if $php::version =~ /5.3|5.4/ {

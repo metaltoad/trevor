@@ -36,7 +36,8 @@ See `Vagrantfile` and `puppet/manifests/default.pp` for customization options.
 * drush
 * capistrano
 * git, svn, bzr, mercurial
-* _TODO: XDebug / XHprof / webgrind_
+* XDebug
+* _TODO: XHprof / webgrind_
 
 ### Security features ###
 
