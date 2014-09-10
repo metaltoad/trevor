@@ -42,6 +42,7 @@ class base {
     'subversion',
     'mercurial',
     'bzr',
+    'graphviz',
   ]:
     ensure => present,
   }
