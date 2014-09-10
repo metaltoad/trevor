@@ -28,10 +28,18 @@ class php::install {
       notify => Service['php-fpm'],
     }
     exec {'xhprof-install':
-      command => 'pecl install channel://pecl.php.net/xhprof-0.9.4',
+      command => 'pecl install channel://pecl.php.net/xhprof-0.9.2',
       creates => '/usr/lib64/php/modules/xhprof.so',
       path => "/bin:/sbin:/usr/bin:/usr/sbin",
       require => Package["php${php::package}-devel"],
+    }
+    exec {'xhprof-install-html':
+      # Workaround for bug https://bugs.php.net/bug.php?id=65992
+      cwd => '/var/www/sites',
+      command => 'git clone https://github.com/phacility/xhprof.git',
+      creates => '/var/www/sites/xhprof/xhprof_html/index.php',
+      path => "/bin:/sbin:/usr/bin:/usr/sbin",
+      require => [File['/var/www/sites'], Package[git]],
     }
     file {'/etc/php.d/xhprof.ini':
       source => 'puppet:///modules/php/php.d/xhprof.ini',
