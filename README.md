@@ -37,7 +37,7 @@ See `Vagrantfile` and `puppet/manifests/default.pp` for customization options.
 * capistrano
 * git, svn, bzr, mercurial
 * XDebug
-* _TODO: XHprof / webgrind_
+* XHProf
 
 ### Security features ###
 
@@ -45,6 +45,15 @@ See `Vagrantfile` and `puppet/manifests/default.pp` for customization options.
 * iptables
 * _TODO: fail2ban_
 * _TODO: iptables_
+
+### Using the debug tools ###
+XHProf is installed in `/usr/share/pear`.  The web interface is available at `http://example.com/xhprof`.
+
+XDebug has debug, profile, and trace triggers enabled.  To use these triggers, add one of the following queries to your URL:
+
+  * `/?XDEBUG_SESSION_START=idekey` (connects to your debugger on port 9000)
+  * `/?XDEBUG_PROFILE` (stores a cachegrind file in /tmp)
+  * `/?XDEBUG_TRACE` (stores a trace file in /tmp)
 
 ### Future goals ###
 

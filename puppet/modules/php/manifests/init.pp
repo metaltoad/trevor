@@ -15,6 +15,7 @@ class php::install {
         "php${php::package}-pear",
         "php${php::package}-mcrypt",
         "php${php::package}-pecl-xdebug",
+        "php${php::package}-devel",
       ]:
       ensure => present,
       require => Yumrepo['ius'],
@@ -25,6 +26,26 @@ class php::install {
       group => 'root',
       require => Package["php${php::package}"],
       notify => Service['php-fpm'],
+    }
+    exec {'xhprof-install':
+      command => 'pecl install channel://pecl.php.net/xhprof-0.9.4',
+      creates => '/usr/lib64/php/modules/xhprof.so',
+      path => "/bin:/sbin:/usr/bin:/usr/sbin",
+      require => Package["php${php::package}-devel"],
+    }
+    file {'/etc/php.d/xhprof.ini':
+      source => 'puppet:///modules/php/php.d/xhprof.ini',
+      owner => 'root',
+      group => 'root',
+      require => Package["php${php::package}"],
+      notify => Service['php-fpm'],
+    }
+    file {'/etc/httpd/conf.d/xhprof.conf':
+      source => 'puppet:///modules/php/xhprof.conf',
+      owner => 'root',
+      group => 'root',
+      require => Package["httpd"],
+      notify => Service['httpd'],
     }
   }
   if $php::version =~ /5.3|5.4/ {
