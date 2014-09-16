@@ -43,6 +43,7 @@ class base {
     'mercurial',
     'bzr',
     'graphviz',
+    'ruby-devel',
   ]:
     ensure => present,
   }
