@@ -28,7 +28,7 @@ class php::install {
       notify => Service['php-fpm'],
     }
     exec {'xhprof-install':
-      command => 'pecl install channel://pecl.php.net/xhprof-0.9.2',
+      command => 'pecl install channel://pecl.php.net/xhprof-0.9.4',
       creates => '/usr/lib64/php/modules/xhprof.so',
       path => "/bin:/sbin:/usr/bin:/usr/sbin",
       require => Package["php${php::package}-devel"],
