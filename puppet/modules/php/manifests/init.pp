@@ -158,7 +158,7 @@ class php::service {
 
 class php ($version = '54', $memory_share = 1.0, $worker_average_memory = 64) {
   $package = $version ? {
-    '5.3' => '53u',
+    '5.3' => '', # native CentOS packages
     '5.4' => '54',
     '5.5' => '55u',
     'hhvm' => 'hhvm',
