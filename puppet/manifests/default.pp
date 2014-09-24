@@ -18,7 +18,7 @@ node default {
     password => 'trevor',
   }
   class { 'php':
-    version => '5.3', # available versions: 5.3, 5.4, 5.5, hhvm
+    version => '5.5', # available versions: 5.3, 5.4, 5.5, hhvm
     memory_share => 0.65, # Percentage of RAM used for PHP
     worker_average_memory => 200, # estimate average PHP memory, in MB
   }
