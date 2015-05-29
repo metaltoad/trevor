@@ -2,8 +2,8 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.require_version ">= 1.4.0"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.box = "centos64-nrel-v20131103"
-  config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20131103.box"
+  config.vm.box = "CentOS-6.6-x86_64-v20150426"
+  config.vm.box_url = "http://sourceforge.net/projects/nrel-vagrant-boxes/files/CentOS-6.6-x86_64-v20150426.box/download"
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 1024
