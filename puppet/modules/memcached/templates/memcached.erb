@@ -4,11 +4,16 @@
   memory_share = scope.lookupvar('memcached::memory_share').to_f;
 
   case unit
-    when nil:  mem *= (1>>20)
-    when 'kB': mem *= (1>>10)
-    when 'MB': mem *= (1<<0)
-    when 'GB': mem *= (1<<10)
-    when 'TB': mem *= (1<<20)
+    when nil
+      mem *= (1>>20)
+    when 'kB'
+      mem *= (1>>10)
+    when 'MB'
+      mem *= (1<<0)
+    when 'GB'
+      mem *= (1<<10)
+    when 'TB'
+      mem *= (1<<20)
   end
 
   # Multiply the total memory by our share.
