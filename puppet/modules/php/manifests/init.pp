@@ -21,7 +21,7 @@ class php::install {
       require => Yumrepo['ius'],
     }
     file {'/etc/php.d/xdebug.ini':
-      source => 'puppet:///modules/php/php.d/xdebug.ini',
+      source => 'puppet:///modules/php/php.d/z_xdebug-settings.ini',
       owner => 'root',
       group => 'root',
       require => Package["php${php::package}"],
