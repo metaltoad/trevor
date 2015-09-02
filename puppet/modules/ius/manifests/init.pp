@@ -7,4 +7,8 @@ class ius {
     gpgcheck => 1,
     require => Yumrepo['epel'],
   }
+
+  package { 'yum-plugin-replace':
+    ensure => present,
+  }
 }

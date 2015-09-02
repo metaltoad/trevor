@@ -1,7 +1,7 @@
 class mysqld::install {
-  package { 'mysql-server' :
+  package { "mysql${mysql::package}-server" :
     ensure  => present,
-    require => Class[ 'mysql::configure' ], # make sure my.cnf file exists so ib_logfile0 is the right size
+    require => [Class[ 'mysql::configure' ], Yumrepo['ius']], # make sure my.cnf file exists so ib_logfile0 is the right size
   }
 }
 

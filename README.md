@@ -16,6 +16,7 @@ See `Vagrantfile` and `puppet/manifests/default.pp` for customization options.
 
 * LAMP
 * Choice of PHP version: 5.3, 5.4, 5.5, HHVM
+* Choice of MySQL version: 5.1, 5.5
 * popular PHP extensions: xml, mcrypt, mbstring, GD, php-imagemagick, etc
 * HTTPS support
 * postfix

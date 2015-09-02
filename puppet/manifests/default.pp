@@ -9,6 +9,7 @@ node default {
   include apache
   class { 'mysql':
     memory_share => 0.30, # Percentage of RAM used for MySQL
+    version => '5.5', # available versions: 5.1, 5.5
   }
   class { 'mysqld':
     password => 'root',
